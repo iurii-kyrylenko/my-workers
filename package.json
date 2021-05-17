@@ -1,0 +1,11 @@
+{
+  "name": "my-workers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node 03-pool/main.js"
+  },
+  "author": "Iurii Kyrylenko",
+  "license": "ISC"
+}
