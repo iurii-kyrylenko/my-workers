@@ -12,7 +12,7 @@ async function createWorkerPool(size) {
   const workers = [];
   const tasks = [];
 
-  function _runTask(fn, params, workerData, resolve, reject) {
+  function _runTask(workerData, resolve, reject) {
     const worker = workerData.worker;
     const task = tasks.shift();
     if (!task) {
@@ -25,7 +25,10 @@ async function createWorkerPool(size) {
       return resolve(msg);
     });
     worker.once("error", reject);
-    worker.postMessage({ sfn: fn.toString(), params });
+    worker.postMessage({
+      sfn: task.fn.toString(),
+      params: task.params
+    });
   }
 
   for (let i = 0; i < size; i++) {
@@ -42,14 +45,14 @@ async function createWorkerPool(size) {
         tasks.push({ fn, params });
         const workerData = workers.find(w => w.isIdle);
         if (workerData) {
-          _runTask(fn, params, workerData, resolve, reject);
+          _runTask(workerData, resolve, reject);
         }
         else {
           const timer = setInterval(() => {
             const workerData = workers.find(w => w.isIdle);
             if (workerData) {
               clearInterval(timer);
-              _runTask(fn, params, workerData, resolve, reject);
+              _runTask(workerData, resolve, reject);
             }
           }, 100);
         }
@@ -69,38 +72,27 @@ process.on('uncaughtException', error => {
 
 async function main() {
   const pool = await createWorkerPool(3);
-  try {
-    console.log(await pool.exec(fib, 41));
-    console.log(await Promise.all([
-      pool.exec(fib, 40),
-      pool.exec(fib, 41),
-      pool.exec(fib, 42),
-      pool.exec(fact, 1n),
-      pool.exec(fact, 2n),
-      pool.exec(fact, 3n),
-      pool.exec(fact, 4n),
-      pool.exec(fact, 5n),
-      pool.exec(fact, 6n),
-      pool.exec(fact, 7n),
-      pool.exec(fact, 8n),
-      pool.exec(fact, 9n),
-      pool.exec(fact, 10n),
-      pool.exec(fact, 11n),
-      pool.exec(fact, 12n),
-      pool.exec(fact, 13n),
-      pool.exec(fact, 14n)
-    ]));
-    console.log(await pool.exec(fib, 38));
-    console.log(await pool.exec(fib, 39));
-    console.log(await pool.exec(fib, 40));
-    console.log(await pool.exec(fact, 10n));
-    console.log(await pool.exec(fact, 20n));
-    console.log(await pool.exec(fib, 41));
-    console.log(await pool.exec(withError));
-    console.log(await pool.exec(fact, 5n));
-  } finally {
-    pool.terminate();
-  }
+
+  const p1 = pool.exec(fib, 42)
+    .then(console.log);
+
+  const p2 = pool.exec(fib, 41)
+    .then(console.log);
+
+  const p3 = pool.exec(fib, 40)
+    .then(console.log);
+
+  const p4 = pool.exec(fib, 39)
+    .then(console.log);
+
+    const p5 = pool.exec(fib, 38)
+    .then(console.log);
+
+  const p6 = pool.exec(fact, 30n)
+    .then(console.log);
+
+  return Promise.all([p1, p2, p3, p4, p5, p6])
+    .finally(pool.terminate);
 }
 
 function fib(n) {
