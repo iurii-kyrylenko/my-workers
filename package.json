@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node 03-pool/with-watcher.js"
+    "test": "node 03-pool/03-with-recursion.js"
   },
   "author": "Iurii Kyrylenko",
   "license": "ISC"
