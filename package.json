@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node 03-pool/main.js"
+    "test": "node 03-pool/main-watcher.js"
   },
   "author": "Iurii Kyrylenko",
   "license": "ISC"
