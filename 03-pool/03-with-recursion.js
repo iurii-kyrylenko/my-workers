@@ -84,7 +84,7 @@ async function main() {
 
   // backgrund task
   let tick = 0;
-  setInterval(() => console.log(pool.stats()), 500).unref();
+  setInterval(() => console.log("stats: ", pool.stats()), 500).unref();
 
   const p1 = pool.exec(fib, 43)
     .then(console.log);
@@ -105,7 +105,7 @@ async function main() {
     .then(console.log);
 
   const p7 = Promise
-    .all([...Array(20).keys()].map(i => pool.exec(fact, BigInt(i))))
+    .all([...Array(30).keys()].map(i => pool.exec(fact, BigInt(i))))
     .then(console.log);
 
   return Promise.all([p1, p2, p3, p4, p5, p6, p7])
